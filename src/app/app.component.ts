@@ -10,9 +10,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     parcelPropsSubject.subscribe(
       props => {
-        this.title = props.patientUuid
+        this.patientUuid = props.patientUuid
       },
     )
   }
-  title = 'hackathon';
+  patientUuid = 'hackathon';
 }
