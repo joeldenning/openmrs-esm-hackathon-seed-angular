@@ -10,6 +10,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "target": "es5",
     "typeRoots": [
       "node_modules/@types"
@@ -17,6 +19,11 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@angular/*": [
+        "node_modules/@angular/*"
+      ]
+    }
   }
 }
