@@ -10,10 +10,14 @@ import {
 } from 'ngx-openmrs-formentry/dist/ngx-formentry';
 
 import adultForm from './adult.json';
+import vitalsForm from './vitals.json';
 import adultFormObs from './obs.json';
 
 
 import { FormGroup } from '@angular/forms';
+import { OpenmrsResourcesService } from './openmrs-resources.service';
+import { FormDataSourceService } from './form-data-source.service';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -33,24 +37,15 @@ export class AppComponent implements OnInit {
   constructor(private questionFactory: QuestionFactory, private formFactory: FormFactory,
               private obsValueAdapater: ObsValueAdapter, private orderAdaptor: OrderValueAdapter,
               private encAdapter: EncounterAdapter, private dataSources: DataSources,
+              protected http: HttpClient,
               private encounterPdfViewerService: EncounterPdfViewerService,
-              private formErrorsService: FormErrorsService) {
-    this.schema = adultForm;
+              private formErrorsService: FormErrorsService, private formDataSourceService: FormDataSourceService) {
+    this.schema = vitalsForm;
 
   }
   patientUuid = 'hackathon';
   ngOnInit() {
-    parcelPropsSubject.subscribe(
-      props => {
-        this.patientUuid = props.patientUuid;
-      },
-    );
-    this.dataSources.registerDataSource('drug', { searchOptions: this.sampleSearch, resolveSelectedValue: this.sampleResolve });
-    this.dataSources.registerDataSource('personAttribute',
-      { searchOptions: this.sampleSearch, resolveSelectedValue: this.sampleResolve });
-    this.dataSources.registerDataSource('problem', { searchOptions: this.sampleSearch, resolveSelectedValue: this.sampleResolve });
-    this.dataSources.registerDataSource('location', { searchOptions: this.sampleSearch, resolveSelectedValue: this.sampleResolve });
-    this.dataSources.registerDataSource('provider', { searchOptions: this.sampleSearch, resolveSelectedValue: this.sampleResolve });
+    this.wireDataSources();
 
     const ds = {
       dataSourceOptions: { concept: undefined },
@@ -111,6 +106,14 @@ export class AppComponent implements OnInit {
     });
   }
 
+  public wireDataSources() {
+    this.dataSources.registerDataSource('location',
+      this.formDataSourceService.getDataSources().location);
+    this.dataSources.registerDataSource('provider',
+      this.formDataSourceService.getDataSources().provider);
+  }
+
+
   public sampleSearch(): Observable<any> {
     const items: Array<any> = [{ value: '0', label: 'Aech' },
     { value: '5b6e58ea-1359-11df-a1f1-0026b9348838', label: 'Art3mis' },
@@ -129,23 +132,39 @@ export class AppComponent implements OnInit {
     $event.preventDefault();
 
     // Set valueProcessingInfo
-    this.form.valueProcessingInfo = {
-      patientUuid: 'patientUuid',
-      visitUuid: 'visitUuid',
-      encounterTypeUuid: 'encounterTypeUuid',
-      formUuid: 'formUuid',
-      encounterUuid: 'encounterUuid',
-      providerUuid: 'providerUuid',
-      utcOffset: '+0300'
-    };
+    parcelPropsSubject.subscribe(
+      props => {
+        console.log('Props', props);
+        this.patientUuid = props.patientUuid;
+        this.form.valueProcessingInfo = {
+          patientUuid: props.patientUuid,
+          // visitUuid: 'visitUuid',
+          encounterTypeUuid: props.encounterTypeUuid,
+          formUuid: props.formUuid,
+          // providerUuid: 'providerUuid',
+          utcOffset: '+0300'
+        };
+        if (this.form.valid) {
+          this.form.showErrors = false;
+          const payload = this.encAdapter.generateFormPayload(this.form);
+          this.saveEncounter(payload).subscribe((res) => {
+            console.log('Response', res);
+          });
+        } else {
+          this.form.showErrors = true;
+          this.form.markInvalidControls(this.form.rootNode);
+        }
+      },
+    );
+  }
 
-    if (this.form.valid) {
-      this.form.showErrors = false;
-      const payload = this.encAdapter.generateFormPayload(this.form);
-    } else {
-      this.form.showErrors = true;
-      this.form.markInvalidControls(this.form.rootNode);
-    }
+  public saveEncounter(payload) {
+    if (!payload) {
+          return null;
+      }
+    const url = '/openmrs/ws/rest/v1/encounter';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(url, JSON.stringify(payload), {headers});
   }
 
   public toggleEncounterViewer() {

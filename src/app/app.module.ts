@@ -6,6 +6,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormEntryModule } from 'ngx-openmrs-formentry/dist/ngx-formentry';
 
 import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
+import { OpenmrsResourcesService } from './openmrs-resources.service';
+import { FormDataSourceService } from './form-data-source.service';
+
 
 @NgModule({
   declarations: [
@@ -13,11 +17,12 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     ReactiveFormsModule,
     FormEntryModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [OpenmrsResourcesService, FormDataSourceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

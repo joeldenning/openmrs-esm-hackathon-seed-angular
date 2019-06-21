@@ -1,0 +1,44 @@
+{
+    "locations": [
+        {
+            "uuid": "aff27d58-a15c-49a6-9beb-d30dcfc0c66e",
+            "name": "Amani Hospital",
+            "id": "8"
+        },
+        {
+            "uuid": "b1a8b05e-3542-4037-bbd3-998ee9c40574",
+            "name": "Inpatient Ward",
+            "id": "6"
+        },
+        {
+            "uuid": "2131aff8-2e2a-480a-b7ab-4ac53250262b",
+            "name": "Isolation Ward",
+            "id": "4"
+        },
+        {
+            "uuid": "7fdfa2cb-bc95-405a-88c6-32b7673c0453",
+            "name": "Laboratory",
+            "id": "3"
+        },
+        {
+            "uuid": "58c57d25-8d39-41ab-8422-108a0c277d98",
+            "name": "Outpatient Clinic",
+            "id": "7"
+        },
+        {
+            "uuid": "7f65d926-57d6-4402-ae10-a5b3bcbf7986",
+            "name": "Pharmacy",
+            "id": "2"
+        },
+        {
+            "uuid": "6351fcf4-e311-4a19-90f9-35667d99a8af",
+            "name": "Registration Desk",
+            "id": "5"
+        },
+        {
+            "uuid": "8d6c993e-c2cc-11de-8d13-0010c6dffd0f",
+            "name": "Unknown Location",
+            "id": "1"
+        }
+    ]
+}
